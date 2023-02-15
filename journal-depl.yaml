@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: journal-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: journal
+  template:
+    metadata:
+      labels:
+        app: journal
+    spec:
+      containers:
+      - name: journal
+        image: denis227/scales-journal
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5012
+        - containerPort: 5002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: journal-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: journal
+  ports:
+  - port: 80
+    targetPort: 5012
+    protocol: TCP
+    name: journal-http
+  - port: 443
+    targetPort: 5002
+    protocol: TCP
+    name: journal-https
+

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reference-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reference
+  template:
+    metadata:
+      labels:
+        app: reference
+    spec:
+      containers:
+      - name: reference
+        image: denis227/scales-reference
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5013
+        - containerPort: 5003
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reference-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: reference
+  ports:
+  - port: 80
+    targetPort: 5013
+    protocol: TCP
+    name: reference-http
+  - port: 443
+    targetPort: 5003
+    protocol: TCP
+    name: reference-https
+
